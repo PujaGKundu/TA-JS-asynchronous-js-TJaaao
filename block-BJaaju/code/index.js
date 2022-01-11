@@ -1,39 +1,43 @@
 const input = document.querySelector("input");
 const div = document.querySelector("div");
-let xml = new XMLHttpRequest();
+const url = `https://api.unsplash.com/photos/?client_id=B35Yfev5LFw9Yb4AbH7L8fS5N7mx9sxOphz7eKmTskw`;
+const getSearchUrl = (query) =>
+  `https://api.unsplash.com/search/photos?query=${query}&client_id=B35Yfev5LFw9Yb4AbH7L8fS5N7mx9sxOphz7eKmTskw`;
 
-document.addEventListener("DOMContentLoaded", () => {
-  xml.open(
-    "GET",
-    "https://api.unsplash.com/photos/random/?client_id=B35Yfev5LFw9Yb4AbH7L8fS5N7mx9sxOphz7eKmTskw"
-  );
+function fetch(url, successHandler) {
+  let xhr = new XMLHttpRequest();
 
-  xml.onload = function () {
-    let imageData = JSON.parse(xml.response);
-    for (let i = 0; i < 7; i++) {
-      let img = document.createElement("img");
-      img.src = imageData.urls.small;
-      div.append(img);
-    }
+  xhr.open("GET", url);
+
+  xhr.onload = () => successHandler(JSON.parse(xhr.response));
+
+  xhr.onerror = function () {
+    console.error("Something went wrong");
   };
 
-  xml.send();
-});
+  xhr.send();
+}
 
-input.addEventListener("keyup", (event) => {
-  if (event.keyCode === 13) {
-    xml.open("GET", `https://api.unsplash.com/photos/${event}`);
+function display(images) {
+  div.innerHTML = "";
+  images.forEach((image) => {
+    let img = document.createElement("img");
+    img.src = image.urls.thumb;
+    div.append(img);
+  });
+}
 
-    xml.onload = function () {
-      let imageData = JSON.parse(xml.response);
-      for (let i = 0; i < 7; i++) {
-        let img = document.createElement("img");
-        img.src = imageData.urls.small;
-        div.append(img);
-      }
-    };
+fetch(url, display);
 
-    xml.send();
+function handleSearch(event) {
+  if (event.keyCode == 13 && input.value) {
+    fetch(
+      getSearchUrl(input.value, (search) => {
+        display(search.reasults);
+      })
+    );
     input.value = "";
   }
-});
+}
+
+input.addEventListener("keyup", handleSearch);
