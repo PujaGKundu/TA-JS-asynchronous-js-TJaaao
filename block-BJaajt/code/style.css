@@ -33,7 +33,7 @@ input {
   border-radius: 50%;
 }
 
-.user {
+.user img {
   width: 100px;
   height: 100px;
 }
@@ -56,16 +56,21 @@ p {
   font-weight: 700;
 }
 
-.followers,
-.following {
+.followers img,
+.following img {
   width: 50px;
   height: 50px;
   margin: 0.3rem;
   border: 1px solid black;
 }
 
+ul,
+li {
+  list-style: none;
+}
+
 .cat {
-  width: 300px;
+  width: 500px;
 }
 
 button {
