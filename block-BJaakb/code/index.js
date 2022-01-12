@@ -4,13 +4,13 @@ const url = `https://api.unsplash.com/photos/?client_id=B35Yfev5LFw9Yb4AbH7L8fS5
 const getSearchUrl = (query) =>
   `https://api.unsplash.com/search/photos?query=${query}&client_id=B35Yfev5LFw9Yb4AbH7L8fS5N7mx9sxOphz7eKmTskw`;
 
-function fetch(url, successHandler) {
+function fetch(url) {
   return new Promise((res, rej) => {
     let xhr = new XMLHttpRequest();
 
     xhr.open("GET", url);
 
-    xhr.onload = () => successHandler(res(JSON.parse(xhr.response)));
+    xhr.onload = () => res(JSON.parse(xhr.response));
 
     xhr.onerror = function () {
       rej("Something went wrong");
@@ -29,15 +29,16 @@ function display(images) {
   });
 }
 
-fetch(url, display);
+fetch(url).then(display);
 
 function handleSearch(event) {
   if (event.keyCode == 13 && input.value) {
-    fetch(
-      getSearchUrl(input.value, (search) => {
+    fetch(getSearchUrl(input.value))
+      .then((search) => {
         display(search.reasults);
       })
-    );
+      .catch((error) => console.error(error));
+
     input.value = "";
   }
 }
