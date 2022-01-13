@@ -20,7 +20,8 @@ function fetch(url) {
   });
 }
 
-function display(images) {
+function display(images = []) {
+  console.log(images);
   div.innerHTML = "";
   images.forEach((image) => {
     let img = document.createElement("img");
@@ -35,7 +36,8 @@ function handleSearch(event) {
   if (event.keyCode == 13 && input.value) {
     fetch(getSearchUrl(input.value))
       .then((search) => {
-        display(search.reasults);
+        console.log(search);
+        display(search.results);
       })
       .catch((error) => console.error(error));
 
