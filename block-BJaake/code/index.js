@@ -1,28 +1,10 @@
 const ul = document.querySelector("ul");
-const option = document.querySelector("option");
+const select = document.querySelector("select");
+let allNews = [];
 
 const url = `https://api.spaceflightnewsapi.net/v3/articles?_limit=30`;
 
-function fetchData(url, news = "") {
-  return new Promise((res, rej) => {
-    let xml = new XMLHttpRequest();
-
-    xml.open("GET", url);
-
-    xml.onload = function () {
-      let data = res(JSON.parse(xml.response));
-      displayData(data, news);
-    };
-
-    xml.onerror = function () {
-      rej("Something went wrong");
-    };
-
-    xml.send();
-  });
-}
-
-function displayData(datas = [], news = "") {
+function displayData(datas = []) {
   ul.innerHTML = "";
   datas.forEach((data) => {
     let li = document.createElement("li");
@@ -46,10 +28,32 @@ function displayData(datas = [], news = "") {
   });
 }
 
-fetchData(url).then(displayData);
-
-function selectedData() {
-  var sel = document.getElementById("news");
-  var selectedNews = sel.value;
-  fetchData(url, selectedNews).then(displayData);
+function displayOptions(source) {
+  source.forEach((s) => {
+    let option = document.createElement("option");
+    option.innerText = s;
+    option.value = s;
+    select.append(option);
+  });
 }
+
+fetch(url)
+  .then((res) => res.json())
+  .then((news) => {
+    allNews = news;
+    displayData(news);
+    let allSources = Array.from(new Set(news.map((n) => n.newsSite)));
+    displayOptions(allSources);
+  });
+
+select.addEventListener("change", (event) => {
+  let source = event.target.value.trim();
+  let filterNews;
+  if (source) {
+    filterNews = allNews.filter((news) => news.newsSite === source);
+  } else {
+    filterNews = allNews;
+  }
+
+  displayData(filterNews);
+});
