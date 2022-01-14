@@ -1,22 +1,16 @@
 - Create four promises that resolve after 1, 2, 3 and 4 seconds with a random value. Using `Promise.all` log the value of each promise that it resolved with.
 
 ```js
-const promise1 = new Promise((res, rej) => {
-  setTimeout(() => res("promise1"), 1000);
-});
-const promise2 = new Promise((res, rej) => {
-  setTimeout(() => res("promise2"), 2000);
-});
-const promise3 = new Promise((res, rej) => {
-  setTimeout(() => res("promise3"), 3000);
-});
-const promise4 = new Promise((res, rej) => {
-  setTimeout(() => res("promise4"), 4000);
-});
+let time = [1, 2, 3, 4];
 
-let all = Promise.all([promise1, promise2, promise3, promise4])
-  .then((res) => console.log(res))
-  .catch((error) => console.error(error));
+let timePromise = time.map(
+  (sec) =>
+    new Promise((res) => {
+      setTimeout(() => res(Math.random()), sec * 1000);
+    })
+);
+
+Promise.all(timePromise).then((res) => console.log(res));
 ```
 
 - Create a list of 5 Github usernames in an array and using `Promise.all` get access to the data of each user from GitHub API. Log the number of followers of each user.
@@ -24,12 +18,14 @@ let all = Promise.all([promise1, promise2, promise3, promise4])
 ```js
 const usernames = ["getify", "gaearon", "AArnott", "subtleGradient", "piranha"];
 
-let userPromises = Promise.all(
-  usernames.map((user) =>
-    fetch(`https://api.github.com/users/${user}`).then((res) => res.json())
-  )
-).then((users) => {
-  users.forEach((u) => console.log(u.followers));
+let userPromises = usernames.map((user) => {
+  return fetch(`https://api.github.com/users/${user}`).then((res) =>
+    res.json()
+  );
+});
+
+Promise.all(userPromises).then((user) => {
+  user.forEach((u) => console.log(u.followers));
 });
 ```
 
@@ -39,11 +35,11 @@ let userPromises = Promise.all(
   - https://aws.random.cat/meow
 
 ```js
-const url = ["https://random.dog/woof.json", "https://aws.random.cat/meow"];
+let one = fetch(`https://random.dog/woof.json`).then((res) => res.json());
 
-let urlPromise = Promise.race(url.map((user) => fetch(user))).then((u) =>
-  console.log(u)
-);
+let two = fetch(`https://aws.random.cat/meow`).then((res) => res.json());
+
+Promise.race([one, two]).then(console.log);
 ```
 
 - Use `Promise.allSettled` to log the value of each promise from the given list of promises. And also check if `Promise.all` works with `one`, `two` and `three` or not
@@ -59,11 +55,11 @@ const three = new Promise((resolve, reject) =>
   setTimeout(() => resolve("John"), 3000)
 );
 
-let allSettled = Promise.allSettled([one, two, three])
+Promise.allSettled([one, two, three])
   .then((res) => console.log(res))
   .catch((error) => console.error(error));
 
-let all = Promise.all([one, two, three])
+Promise.all([one, two, three])
   .then((res) => console.log(res))
   .catch((error) => console.error(error));
 //As the two is an error it is rejected in Promise.all
