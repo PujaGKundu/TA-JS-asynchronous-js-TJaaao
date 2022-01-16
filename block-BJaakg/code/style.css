@@ -106,6 +106,15 @@ a {
   background-color: cadetblue;
   border-radius: 1rem;
   margin: 2rem;
+  position: absolute;
+  top: 1rem;
+  left: 0.5rem;
+  right: 1rem;
+  display: none;
+}
+
+.close {
+  cursor: pointer;
 }
 
 span {
@@ -116,6 +125,8 @@ span {
 }
 
 .charList {
+  text-align: left;
+  width: 90%;
   border-bottom: 2px dashed white;
   padding: 0.5rem 1rem;
   margin-bottom: 0.2rem;
